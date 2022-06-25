@@ -34,16 +34,20 @@ set -e
 pip3 install virtualenv # Assumes pip3 is installed!
 python3 -m virtualenv $OUTPUT_FOLDER/venv
 source $OUTPUT_FOLDER/venv/bin/activate
-pip3 install --pre "tensorflow==1.15.*"
+pip3 install --pre "tensorflow-gpu==1.15.*"
 pip3 install -r requirements.txt
 
 # Step 2: Downloads data if not present.
 echo
 python3 -m script_download_data $EXPT $OUTPUT_FOLDER
 
+# python3 -m script_download_data traffic ~/tft_outputs
+
 # Step 3: Train & Test
 echo
 python3 -m script_train_fixed_params $EXPT $OUTPUT_FOLDER $USE_GPU $TEST_MODE
+
+# python3 -m script_train_fixed_params traffic ~/tft_outputs no yes 
 
 # Uncomment below for full hyperparamter optimisation.
 # python3 -m script_hyperparam_opt $EXPT $OUTPUT_FOLDER $USE_GPU yes
