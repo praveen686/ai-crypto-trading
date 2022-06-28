@@ -47,7 +47,7 @@ python3 -m script_download_data $EXPT $OUTPUT_FOLDER
 echo
 python3 -m script_train_fixed_params $EXPT $OUTPUT_FOLDER $USE_GPU $TEST_MODE
 
-# python3 -m script_train_fixed_params traffic ~/tft_outputs no yes 
+# python3 -m script_train_fixed_params traffic ~/tft_outputs yes yes 
 
 # Uncomment below for full hyperparamter optimisation.
 # python3 -m script_hyperparam_opt $EXPT $OUTPUT_FOLDER $USE_GPU yes
