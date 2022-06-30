@@ -46,10 +46,13 @@ class BitcoinFormatter(GenericDataFormatter):
 
         print('Formatting train-valid-test splits.')
 
-        index = df['year']
+        valid_boundary = str(valid_boundary) + '/1/1'
+        test_boundary = str(test_boundary) + '/1/1'
+
+        index = df['Date']
         train = df.loc[index < valid_boundary]
         valid = df.loc[(index >= valid_boundary) & (index < test_boundary)]
-        test = df.loc[(index >= test_boundary) & (df.index <= '2019-06-28')]
+        test = df.loc[index >= test_boundary]
 
         self.set_scalers(train)
 
