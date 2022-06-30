@@ -25,6 +25,7 @@ import data_formatters.electricity
 import data_formatters.favorita
 import data_formatters.traffic
 import data_formatters.volatility
+import data_formatters.bitcoin
 
 
 class ExperimentConfig(object):
@@ -41,7 +42,7 @@ class ExperimentConfig(object):
       experiment.
   """
 
-  default_experiments = ['volatility', 'electricity', 'traffic', 'favorita']
+  default_experiments = ['volatility', 'electricity', 'traffic', 'favorita', 'bitcoin']
 
   def __init__(self, experiment='volatility', root_folder=None):
     """Creates configs based on default experiment chosen.
