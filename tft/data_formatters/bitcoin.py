@@ -9,20 +9,21 @@ InputTypes = data_formatters.base.InputTypes
 
 class BitcoinFormatter(GenericDataFormatter):
     _column_definition = [
-        ('Symbol', DataTypes.CATEGORICAL, InputTypes.ID),
+        ('id', DataTypes.REAL_VALUED, InputTypes.ID),
         ('Date', DataTypes.DATE, InputTypes.TIME),
-        ('ave_block_size', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
-        ('difficulty', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
-        ('hash_rate', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
+        ('ave_block_size', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
+        ('difficulty', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
+        ('hash_rate', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
         ('market_price', DataTypes.REAL_VALUED, InputTypes.TARGET),
-        ('miners_rev', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
-        ('transaction', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
-        ('ex_trage_vol', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
+        ('miners_rev', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
+        ('transaction', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
+        ('ex_trage_vol', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
+        ('symbol', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
         ('days_from_start', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
-        ('day_of_week', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
-        ('day_of_month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
-        ('week_of_year', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
-        ('month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        # ('day_of_week', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        # ('day_of_month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        # ('week_of_year', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        # ('month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
     ]
 
@@ -88,7 +89,7 @@ class BitcoinFormatter(GenericDataFormatter):
         self._target_scaler = sklearn.preprocessing.StandardScaler().fit(
             df[[target_column]].values)  # used for predictions
 
-        # Format categorical scalers
+        # # Format categorical scalers
         categorical_inputs = utils.extract_cols_from_data_type(
             DataTypes.CATEGORICAL, column_definitions,
             {InputTypes.ID, InputTypes.TIME})
@@ -102,7 +103,7 @@ class BitcoinFormatter(GenericDataFormatter):
                 srs.values)
             num_classes.append(srs.nunique())
 
-        # Set categorical scaler outputs
+        # # Set categorical scaler outputs
         self._cat_scalers = categorical_scalers
         self._num_classes_per_cat_input = num_classes
 
@@ -127,7 +128,7 @@ class BitcoinFormatter(GenericDataFormatter):
 
         real_inputs = utils.extract_cols_from_data_type(
             DataTypes.REAL_VALUED, column_definitions,
-            {InputTypes.ID, InputTypes.TIME, InputTypes.OBSERVED_INPUT})
+            {InputTypes.ID, InputTypes.TIME})
 
         categorical_inputs = utils.extract_cols_from_data_type(
             DataTypes.CATEGORICAL, column_definitions,
