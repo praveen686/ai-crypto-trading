@@ -108,11 +108,11 @@ def process_bitcoin(config):
     # Adds additional date/day fields
     df['Date'] = pd.to_datetime(df['Date'], format="%Y/%m/%d")
     df['days_from_start'] = (df['Date'] - pd.datetime(2014, 1, 1)).apply(lambda x: x.days)
-    df['day_of_week'] = df['Date'].dayofweek
-    df['day_of_month'] = df['Date'].day
-    df['week_of_year'] = df['Date'].weekofyear
-    df['month'] = df['Date'].month
-    df['year'] = df['Date'].year
+    df['day_of_week'] = df['Date'].apply(lambda x: x.dayofweek)
+    df['day_of_month'] = df['Date'].apply(lambda x: x.day)
+    df['week_of_year'] = df['Date'].apply(lambda x: x.weekofyear)
+    df['month'] = df['Date'].apply(lambda x: x.month)
+    df['year'] = df['Date'].apply(lambda x: x.year)
 
     output_file = config.data_csv_path
     print('Completed formatting, saving to {}'.format(output_file))
