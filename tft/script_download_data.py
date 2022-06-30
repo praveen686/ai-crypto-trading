@@ -95,6 +95,31 @@ def download_and_unzip(url, zip_path, csv_path, data_folder):
 
   print('Done.')
 
+def process_bitcoin(config):
+
+    data_folder = config.data_folder
+    csv_path = os.path.join(data_folder, 'bitcoin_his.csv')
+    url = 'https://raw.githubusercontent.com/CharlesPeng1998/ai-crypto-trading/develop/datasets/merge/result.csv'
+    download_from_url(url, csv_path)
+
+    df = pd.read_csv(csv_path, index_col=0)  # no explicit index
+    print('reading bitcoin csv complete. Adding extra inputs')
+
+    # Adds additional date/day fields
+    df['Date'] = pd.to_datetime(df['Date'], format="%Y/%m/%d")
+    df['days_from_start'] = (df['Date'] - pd.datetime(2014, 1, 1)).days
+    df['day_of_week'] = df['Date'].dayofweek
+    df['day_of_month'] = df['Date'].day
+    df['week_of_year'] = df['Date'].weekofyear
+    df['month'] = df['Date'].month
+    df['year'] = df['Date'].year
+
+    output_file = config.data_csv_path
+    print('Completed formatting, saving to {}'.format(output_file))
+    df.to_csv(output_file)
+
+    print('Done.')
+
 
 # Dataset specific download routines.
 def download_volatility(config):
@@ -590,7 +615,8 @@ def main(expt_name, force_download, output_folder):
       'volatility': download_volatility,
       'electricity': download_electricity,
       'traffic': download_traffic,
-      'favorita': process_favorita
+      'favorita': process_favorita,
+      'bitcoin': process_bitcoin
   }
 
   if expt_name not in download_functions:

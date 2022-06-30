@@ -18,6 +18,11 @@ class BitcoinFormatter(GenericDataFormatter):
         ('miners_rev', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
         ('transaction', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
         ('ex_trage_vol', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
+        ('days_from_start', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
+        ('day_of_week', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        ('day_of_month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        ('week_of_year', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        ('month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
     ]
 
@@ -30,7 +35,7 @@ class BitcoinFormatter(GenericDataFormatter):
         self._target_scaler = None
         self._num_classes_per_cat_input = None
 
-    def split_data(self, df, valid_boundary=2016, test_boundary=2018):
+    def split_data(self, df, valid_boundary=2018, test_boundary=2020):
         """Splits data frame into training-validation-test data frames.
 
         This also calibrates scaling object, and transforms data for each split.
@@ -46,13 +51,11 @@ class BitcoinFormatter(GenericDataFormatter):
 
         print('Formatting train-valid-test splits.')
 
-        valid_boundary = str(valid_boundary) + '/1/1'
-        test_boundary = str(test_boundary) + '/1/1'
 
-        index = df['Date']
+        index = df['year']
         train = df.loc[index < valid_boundary]
         valid = df.loc[(index >= valid_boundary) & (index < test_boundary)]
-        test = df.loc[index >= test_boundary]
+        test = df.loc[(index >= test_boundary)]
 
         self.set_scalers(train)
 
@@ -78,12 +81,30 @@ class BitcoinFormatter(GenericDataFormatter):
         # Format real scalers
         real_inputs = utils.extract_cols_from_data_type(
             DataTypes.REAL_VALUED, column_definitions,
-            {InputTypes.ID, InputTypes.TIME, InputTypes.OBSERVED_INPUT})
+            {InputTypes.ID, InputTypes.TIME})
 
         data = df[real_inputs].values
         self._real_scalers = sklearn.preprocessing.StandardScaler().fit(data)
         self._target_scaler = sklearn.preprocessing.StandardScaler().fit(
             df[[target_column]].values)  # used for predictions
+
+        # Format categorical scalers
+        categorical_inputs = utils.extract_cols_from_data_type(
+            DataTypes.CATEGORICAL, column_definitions,
+            {InputTypes.ID, InputTypes.TIME})
+
+        categorical_scalers = {}
+        num_classes = []
+        for col in categorical_inputs:
+            # Set all to str so that we don't have mixed integer/string columns
+            srs = df[col].apply(str)
+            categorical_scalers[col] = sklearn.preprocessing.LabelEncoder().fit(
+                srs.values)
+            num_classes.append(srs.nunique())
+
+        # Set categorical scaler outputs
+        self._cat_scalers = categorical_scalers
+        self._num_classes_per_cat_input = num_classes
 
     def transform_inputs(self, df):
         """Performs feature transformations.
@@ -108,8 +129,17 @@ class BitcoinFormatter(GenericDataFormatter):
             DataTypes.REAL_VALUED, column_definitions,
             {InputTypes.ID, InputTypes.TIME, InputTypes.OBSERVED_INPUT})
 
+        categorical_inputs = utils.extract_cols_from_data_type(
+            DataTypes.CATEGORICAL, column_definitions,
+            {InputTypes.ID, InputTypes.TIME})
+
         # Format real inputs
         output[real_inputs] = self._real_scalers.transform(df[real_inputs].values)
+
+        # Format categorical inputs
+        for col in categorical_inputs:
+            string_df = df[col].apply(str)
+            output[col] = self._cat_scalers[col].transform(string_df)
 
         return output
 
