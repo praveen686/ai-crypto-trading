@@ -133,7 +133,7 @@ class BitcoinFormatter(GenericDataFormatter):
 
         real_inputs = utils.extract_cols_from_data_type(
             DataTypes.REAL_VALUED, column_definitions,
-            {InputTypes.ID, InputTypes.TIME})
+            {InputTypes.ID, InputTypes.TIME, InputTypes.EMBEDDING})
 
         categorical_inputs = utils.extract_cols_from_data_type(
             DataTypes.CATEGORICAL, column_definitions,
