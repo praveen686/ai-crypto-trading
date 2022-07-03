@@ -20,14 +20,14 @@ class BitcoinFormatter(GenericDataFormatter):
         ('ex_trage_vol', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
         ('symbol', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
         ('days_from_start', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
-        ('day_of_week', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
-        ('day_of_month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        # ('day_of_week', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        # ('day_of_month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         # ('week_of_year', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         # ('month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
     ]
-    for i in range(768):
-            _column_definition.append(('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING))
+    # for i in range(768):
+    #         _column_definition.append(('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING))
 
     print("Debug _column_definition={}".format(_column_definition))
 
@@ -189,6 +189,7 @@ class BitcoinFormatter(GenericDataFormatter):
             'dropout_rate': 0.3,
             'hidden_layer_size': 160,
             'learning_rate': 0.01,
+            # 'minibatch_size': 64,
             'minibatch_size': 64,
             'max_gradient_norm': 0.01,
             'num_heads': 1,
