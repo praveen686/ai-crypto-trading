@@ -87,8 +87,6 @@ def main(expt_name,
   raw_data = pd.read_csv(data_csv_path, index_col=0)
   train, valid, test = data_formatter.split_data(raw_data)
 
-  print("Debug one sample = {}".format(train.loc[0]))
-
   train_samples, valid_samples = data_formatter.get_num_samples_for_calibration(
   )
 
