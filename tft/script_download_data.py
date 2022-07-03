@@ -99,7 +99,7 @@ def process_bitcoin(config):
 
     data_folder = config.data_folder
     csv_path = os.path.join(data_folder, 'bitcoin_his.csv')
-    url = 'https://raw.githubusercontent.com/CharlesPeng1998/ai-crypto-trading/develop/datasets/merge/result.csv'
+    url = 'https://raw.githubusercontent.com/CharlesPeng1998/ai-crypto-trading/develop/datasets/data_embs/resultWithEmbs.csv'
     download_from_url(url, csv_path)
 
     df = pd.read_csv(csv_path, index_col=0)  # no explicit index
