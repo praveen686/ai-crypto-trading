@@ -26,8 +26,8 @@ class BitcoinFormatter(GenericDataFormatter):
         # ('month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
     ]
-    # for i in range(768):
-    #         _column_definition.append(('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING))
+    for i in range(768):
+            _column_definition.append(('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING))
 
     def __init__(self):
         """Initialises formatter."""
@@ -124,26 +124,26 @@ class BitcoinFormatter(GenericDataFormatter):
         """
         output = df.copy()
 
-        # if self._real_scalers is None and self._cat_scalers is None:
-        #     raise ValueError('Scalers have not been set!')
+        if self._real_scalers is None and self._cat_scalers is None:
+            raise ValueError('Scalers have not been set!')
 
-        # column_definitions = self.get_column_definition()
+        column_definitions = self.get_column_definition()
 
-        # real_inputs = utils.extract_cols_from_data_type(
-        #     DataTypes.REAL_VALUED, column_definitions,
-        #     {InputTypes.ID, InputTypes.TIME, InputTypes.EMBEDDING})
+        real_inputs = utils.extract_cols_from_data_type(
+            DataTypes.REAL_VALUED, column_definitions,
+            {InputTypes.ID, InputTypes.TIME, InputTypes.EMBEDDING})
 
-        # categorical_inputs = utils.extract_cols_from_data_type(
-        #     DataTypes.CATEGORICAL, column_definitions,
-        #     {InputTypes.ID, InputTypes.TIME})
+        categorical_inputs = utils.extract_cols_from_data_type(
+            DataTypes.CATEGORICAL, column_definitions,
+            {InputTypes.ID, InputTypes.TIME})
 
-        # # Format real inputs
-        # output[real_inputs] = self._real_scalers.transform(df[real_inputs].values)
+        # Format real inputs
+        output[real_inputs] = self._real_scalers.transform(df[real_inputs].values)
 
-        # # Format categorical inputs
-        # for col in categorical_inputs:
-        #     string_df = df[col].apply(str)
-        #     output[col] = self._cat_scalers[col].transform(string_df)
+        # Format categorical inputs
+        for col in categorical_inputs:
+            string_df = df[col].apply(str)
+            output[col] = self._cat_scalers[col].transform(string_df)
 
         return output
 

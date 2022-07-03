@@ -707,8 +707,6 @@ class TemporalFusionTransformer(object):
         'identifier': identifiers
     }
 
-    print("Debug: {}".format(inputs[0, 0, :]))
-
     return sampled_data
 
   def _batch_data(self, data):
