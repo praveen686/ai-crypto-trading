@@ -151,14 +151,18 @@ class GenericDataFormatter(abc.ABC):
     time = [tup for tup in column_definition if tup[2] == InputTypes.TIME]
     real_inputs = [
         tup for tup in column_definition if tup[1] == DataTypes.REAL_VALUED and
-        tup[2] not in {InputTypes.ID, InputTypes.TIME}
+        tup[2] not in {InputTypes.ID, InputTypes.TIME, InputTypes.EMBEDDING}
     ]
     categorical_inputs = [
         tup for tup in column_definition if tup[1] == DataTypes.CATEGORICAL and
         tup[2] not in {InputTypes.ID, InputTypes.TIME}
     ]
+    embedding_inputs = [
+        tup for tup in column_definition if tup[1] == DataTypes.CATEGORICAL and
+        tup[2] == InputTypes.EMBEDDING
+    ]
 
-    return identifier + time + real_inputs + categorical_inputs
+    return identifier + time + real_inputs + categorical_inputs + embedding_inputs
 
   def _get_input_columns(self):
     """Returns names of all input columns."""
