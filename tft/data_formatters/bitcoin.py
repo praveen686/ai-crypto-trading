@@ -87,7 +87,7 @@ class BitcoinFormatter(GenericDataFormatter):
         # Format real scalers
         real_inputs = utils.extract_cols_from_data_type(
             DataTypes.REAL_VALUED, column_definitions,
-            {InputTypes.ID, InputTypes.TIME})
+            {InputTypes.ID, InputTypes.TIME, InputTypes.EMBEDDING})
 
         data = df[real_inputs].values
         self._real_scalers = sklearn.preprocessing.StandardScaler().fit(data)
