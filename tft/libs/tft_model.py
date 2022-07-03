@@ -504,13 +504,13 @@ class TemporalFusionTransformer(object):
       if i in self._static_input_loc:
         raise ValueError('Observation cannot be static!')
 
-    if all_inputs.get_shape().as_list()[-1] != self.input_size:
+    if all_inputs.get_shape().as_list()[-1] != self.crypto_input_size:
       raise ValueError(
           'Illegal number of inputs! Inputs observed={}, expected={}'.format(
-              all_inputs.get_shape().as_list()[-1], self.input_size))
+              all_inputs.get_shape().as_list()[-1], self.crypto_input_size))
 
     num_categorical_variables = len(self.category_counts)
-    num_regular_variables = self.input_size - num_categorical_variables
+    num_regular_variables = self.crypto_input_size - num_categorical_variables
 
     embedding_sizes = [
         self.hidden_layer_size for i, size in enumerate(self.category_counts)
@@ -795,9 +795,12 @@ class TemporalFusionTransformer(object):
             time_steps,
             combined_input_size,
         ))
+    
+    crypto_inputs = all_inputs[:, :, :self.crypto_input_size]
+    embedding_inputs = all_inputs[:, :, self.crypto_input_size:]
 
     unknown_inputs, known_combined_layer, obs_inputs, static_inputs \
-        = self.get_tft_embeddings(all_inputs)
+        = self.get_tft_embeddings(crypto_inputs)
 
     # Isolate known and observed historical inputs.
     if unknown_inputs is not None:
