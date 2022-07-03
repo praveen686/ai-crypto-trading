@@ -26,6 +26,10 @@ class BitcoinFormatter(GenericDataFormatter):
         # ('month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
     ]
+    for i in range(768):
+            _column_definition.append(('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING))
+
+    print("Debug _column_definition={}".format(_column_definition))
 
     def __init__(self):
         """Initialises formatter."""
@@ -35,6 +39,7 @@ class BitcoinFormatter(GenericDataFormatter):
         self._cat_scalers = None
         self._target_scaler = None
         self._num_classes_per_cat_input = None
+
 
     def split_data(self, df, valid_boundary=2018, test_boundary=2020):
         """Splits data frame into training-validation-test data frames.

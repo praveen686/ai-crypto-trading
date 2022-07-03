@@ -47,6 +47,7 @@ class InputTypes(enum.IntEnum):
   STATIC_INPUT = 3
   ID = 4  # Single column used as an entity identifier
   TIME = 5  # Single column exclusively used as a time index
+  EMBEDDING = 6
 
 
 class GenericDataFormatter(abc.ABC):
@@ -167,6 +168,22 @@ class GenericDataFormatter(abc.ABC):
         if tup[2] not in {InputTypes.ID, InputTypes.TIME}
     ]
 
+  def _get_crypto_columns(self):
+    """Returns names of all crypto-related columns."""
+    return [
+        tup[0]
+        for tup in self.get_column_definition()
+        if tup[2] not in {InputTypes.ID, InputTypes.TIME, InputTypes.EMBEDDING}
+    ]
+
+  def _get_embedding_columns(self):
+    """Returns names of all sentence embedding columns."""
+    return [
+        tup[0]
+        for tup in self.get_column_definition()
+        if tup[2] == InputTypes.EMBEDDING
+    ]
+
   def _get_tft_input_indices(self):
     """Returns the relevant indexes and input sizes required by TFT."""
 
@@ -194,6 +211,10 @@ class GenericDataFormatter(abc.ABC):
     locations = {
         'input_size':
             len(self._get_input_columns()),
+        'crypto_input_size': 
+            len(self._get_crypto_columns()),
+        'embedding_input_size': 
+            len(self._get_embedding_columns()),
         'output_size':
             len(_get_locations({InputTypes.TARGET}, column_definition)),
         'category_counts':

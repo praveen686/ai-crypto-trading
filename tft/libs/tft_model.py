@@ -431,6 +431,11 @@ class TemporalFusionTransformer(object):
     # Data parameters
     self.time_steps = int(params['total_time_steps'])
     self.input_size = int(params['input_size'])
+    self.crypto_input_size = int(params['crypto_input_size'])
+    self.embedding_input_size = int(params['embedding_input_size'])
+
+    print("Debug input_size={}, crypto_input_size={}, embedding_input_size={}".format(self.input_size, self.crypto_input_size, self.embedding_input_size))
+
     self.output_size = int(params['output_size'])
     self.category_counts = json.loads(str(params['category_counts']))
     self.n_multiprocessing_workers = int(params['multiprocessing_workers'])
