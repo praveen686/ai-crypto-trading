@@ -506,13 +506,13 @@ class TemporalFusionTransformer(object):
       if i in self._static_input_loc:
         raise ValueError('Observation cannot be static!')
 
-    if all_inputs.get_shape().as_list()[-1] != self.crypto_input_size:
+    if all_inputs.get_shape().as_list()[-1] != self.crypto_input_size + self.embedding_downsample_size:
       raise ValueError(
           'Illegal number of inputs! Inputs observed={}, expected={}'.format(
-              all_inputs.get_shape().as_list()[-1], self.crypto_input_size))
+              all_inputs.get_shape().as_list()[-1], self.crypto_input_size + self.embedding_downsample_size))
 
     num_categorical_variables = len(self.category_counts)
-    num_regular_variables = self.crypto_input_size - num_categorical_variables
+    num_regular_variables = self.crypto_input_size + self.embedding_downsample_size - num_categorical_variables
 
     embedding_sizes = [
         self.hidden_layer_size for i, size in enumerate(self.category_counts)
@@ -808,22 +808,26 @@ class TemporalFusionTransformer(object):
     embedding_downsample = tf.keras.layers.TimeDistributed(
       tf.keras.layers.Dense(self.embedding_downsample_size, 
         activation=tf.keras.activations.relu))(embedding_hidden)
+
+    num_categorical_variables = len(self.category_counts)
+    num_regular_variables = self.crypto_input_size - num_categorical_variables 
+    inputs = concat([crypto_inputs[:, :, :num_regular_variables],
+                     embedding_downsample[:, :, :],
+                     crypto_inputs[:, :, num_regular_variables:]], axis=-1)
     
     unknown_inputs, known_combined_layer, obs_inputs, static_inputs \
-        = self.get_tft_embeddings(crypto_inputs)
+        = self.get_tft_embeddings(inputs)
 
     # Isolate known and observed historical inputs.
     if unknown_inputs is not None:
       historical_inputs = concat([
           unknown_inputs[:, :encoder_steps, :],
-          embedding_downsample[:, :encoder_steps, :],
           known_combined_layer[:, :encoder_steps, :],
           obs_inputs[:, :encoder_steps, :]
       ],
                                  axis=-1)
     else:
       historical_inputs = concat([
-          embedding_downsample[:, :encoder_steps, :],
           known_combined_layer[:, :encoder_steps, :],
           obs_inputs[:, :encoder_steps, :]
       ],
