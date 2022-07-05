@@ -219,6 +219,8 @@ class GenericDataFormatter(abc.ABC):
             len(self._get_crypto_columns()),
         'embedding_input_size': 
             len(self._get_embedding_columns()),
+        'embedding_downsample_hidden_size': 256,
+        'embedding_downsample_size': 4,
         'output_size':
             len(_get_locations({InputTypes.TARGET}, column_definition)),
         'category_counts':
