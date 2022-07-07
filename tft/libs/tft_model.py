@@ -1142,7 +1142,8 @@ class TemporalFusionTransformer(object):
             monitor='val_loss',
             save_best_only=True,
             save_weights_only=True),
-        tf.keras.callbacks.TerminateOnNaN()
+        tf.keras.callbacks.TerminateOnNaN(),
+        tf.keras.callbacks.TensorBoard(log_dir='./logs')
     ]
 
     print('Getting batched_data')
