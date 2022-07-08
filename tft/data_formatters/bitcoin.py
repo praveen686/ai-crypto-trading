@@ -20,16 +20,14 @@ class BitcoinFormatter(GenericDataFormatter):
         ('ex_trage_vol', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
         ('symbol', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
         ('days_from_start', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
-        ('day_of_week', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
-        ('day_of_month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        # ('day_of_week', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        # ('day_of_month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         # ('week_of_year', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         # ('month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
     ]
     for i in range(768):
             _column_definition.append(('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING))
-
-    print("Debug _column_definition={}".format(_column_definition))
 
     def __init__(self):
         """Initialises formatter."""
@@ -41,7 +39,7 @@ class BitcoinFormatter(GenericDataFormatter):
         self._num_classes_per_cat_input = None
 
 
-    def split_data(self, df, valid_boundary=2018, test_boundary=2020):
+    def split_data(self, df, valid_boundary=2021, test_boundary=2022):
         """Splits data frame into training-validation-test data frames.
 
         This also calibrates scaling object, and transforms data for each split.
@@ -87,7 +85,7 @@ class BitcoinFormatter(GenericDataFormatter):
         # Format real scalers
         real_inputs = utils.extract_cols_from_data_type(
             DataTypes.REAL_VALUED, column_definitions,
-            {InputTypes.ID, InputTypes.TIME})
+            {InputTypes.ID, InputTypes.TIME, InputTypes.EMBEDDING})
 
         data = df[real_inputs].values
         self._real_scalers = sklearn.preprocessing.StandardScaler().fit(data)
@@ -133,7 +131,7 @@ class BitcoinFormatter(GenericDataFormatter):
 
         real_inputs = utils.extract_cols_from_data_type(
             DataTypes.REAL_VALUED, column_definitions,
-            {InputTypes.ID, InputTypes.TIME})
+            {InputTypes.ID, InputTypes.TIME, InputTypes.EMBEDDING})
 
         categorical_inputs = utils.extract_cols_from_data_type(
             DataTypes.CATEGORICAL, column_definitions,
@@ -173,8 +171,8 @@ class BitcoinFormatter(GenericDataFormatter):
         """Returns fixed model parameters for experiments."""
 
         fixed_params = {
-            'total_time_steps': 252 + 5,
-            'num_encoder_steps': 252,
+            'total_time_steps': 10,
+            'num_encoder_steps': 7,
             'num_epochs': 100,
             'early_stopping_patience': 5,
             'multiprocessing_workers': 5,
@@ -189,6 +187,7 @@ class BitcoinFormatter(GenericDataFormatter):
             'dropout_rate': 0.3,
             'hidden_layer_size': 160,
             'learning_rate': 0.01,
+            # 'minibatch_size': 64,
             'minibatch_size': 64,
             'max_gradient_norm': 0.01,
             'num_heads': 1,

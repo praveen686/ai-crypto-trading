@@ -433,6 +433,8 @@ class TemporalFusionTransformer(object):
     self.input_size = int(params['input_size'])
     self.crypto_input_size = int(params['crypto_input_size'])
     self.embedding_input_size = int(params['embedding_input_size'])
+    self.embedding_downsample_hidden_size = int(params['embedding_downsample_hidden_size'])
+    self.embedding_downsample_size = int(params['embedding_downsample_size'])
 
     print("Debug input_size={}, crypto_input_size={}, embedding_input_size={}".format(self.input_size, self.crypto_input_size, self.embedding_input_size))
 
@@ -504,13 +506,13 @@ class TemporalFusionTransformer(object):
       if i in self._static_input_loc:
         raise ValueError('Observation cannot be static!')
 
-    if all_inputs.get_shape().as_list()[-1] != self.input_size:
+    if all_inputs.get_shape().as_list()[-1] != self.crypto_input_size + self.embedding_downsample_size:
       raise ValueError(
           'Illegal number of inputs! Inputs observed={}, expected={}'.format(
-              all_inputs.get_shape().as_list()[-1], self.input_size))
+              all_inputs.get_shape().as_list()[-1], self.crypto_input_size + self.embedding_downsample_size))
 
     num_categorical_variables = len(self.category_counts)
-    num_regular_variables = self.input_size - num_categorical_variables
+    num_regular_variables = self.crypto_input_size + self.embedding_downsample_size - num_categorical_variables
 
     embedding_sizes = [
         self.hidden_layer_size for i, size in enumerate(self.category_counts)
@@ -795,9 +797,26 @@ class TemporalFusionTransformer(object):
             time_steps,
             combined_input_size,
         ))
+    
+    crypto_inputs = all_inputs[:, :, :self.crypto_input_size]
+    embedding_inputs = all_inputs[:, :, self.crypto_input_size:]
 
+    embedding_hidden = tf.keras.layers.TimeDistributed(
+      tf.keras.layers.Dense(self.embedding_downsample_hidden_size, 
+        activation=tf.keras.activations.relu))(embedding_inputs)
+    
+    embedding_downsample = tf.keras.layers.TimeDistributed(
+      tf.keras.layers.Dense(self.embedding_downsample_size, 
+        activation=tf.keras.activations.relu))(embedding_hidden)
+
+    num_categorical_variables = len(self.category_counts)
+    num_regular_variables = self.crypto_input_size - num_categorical_variables 
+    inputs = concat([crypto_inputs[:, :, :num_regular_variables],
+                     embedding_downsample[:, :, :],
+                     crypto_inputs[:, :, num_regular_variables:]], axis=-1)
+    
     unknown_inputs, known_combined_layer, obs_inputs, static_inputs \
-        = self.get_tft_embeddings(all_inputs)
+        = self.get_tft_embeddings(inputs)
 
     # Isolate known and observed historical inputs.
     if unknown_inputs is not None:
@@ -1123,7 +1142,8 @@ class TemporalFusionTransformer(object):
             monitor='val_loss',
             save_best_only=True,
             save_weights_only=True),
-        tf.keras.callbacks.TerminateOnNaN()
+        tf.keras.callbacks.TerminateOnNaN(),
+        tf.keras.callbacks.TensorBoard(log_dir='./logs')
     ]
 
     print('Getting batched_data')

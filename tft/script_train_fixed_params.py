@@ -86,6 +86,7 @@ def main(expt_name,
   print("Loading & splitting data...")
   raw_data = pd.read_csv(data_csv_path, index_col=0)
   train, valid, test = data_formatter.split_data(raw_data)
+
   train_samples, valid_samples = data_formatter.get_num_samples_for_calibration(
   )
 
@@ -234,4 +235,4 @@ if __name__ == "__main__":
       model_folder=os.path.join(config.model_folder, "fixed"),
       data_csv_path=config.data_csv_path,
       data_formatter=formatter,
-      use_testing_mode=True)  # Change to false to use original default params
+      use_testing_mode=False)  # Change to false to use original default params

@@ -151,14 +151,18 @@ class GenericDataFormatter(abc.ABC):
     time = [tup for tup in column_definition if tup[2] == InputTypes.TIME]
     real_inputs = [
         tup for tup in column_definition if tup[1] == DataTypes.REAL_VALUED and
-        tup[2] not in {InputTypes.ID, InputTypes.TIME}
+        tup[2] not in {InputTypes.ID, InputTypes.TIME, InputTypes.EMBEDDING}
     ]
     categorical_inputs = [
         tup for tup in column_definition if tup[1] == DataTypes.CATEGORICAL and
         tup[2] not in {InputTypes.ID, InputTypes.TIME}
     ]
+    embedding_inputs = [
+        tup for tup in column_definition if tup[1] == DataTypes.CATEGORICAL and
+        tup[2] == InputTypes.EMBEDDING
+    ]
 
-    return identifier + time + real_inputs + categorical_inputs
+    return identifier + time + real_inputs + categorical_inputs + embedding_inputs
 
   def _get_input_columns(self):
     """Returns names of all input columns."""
@@ -215,6 +219,8 @@ class GenericDataFormatter(abc.ABC):
             len(self._get_crypto_columns()),
         'embedding_input_size': 
             len(self._get_embedding_columns()),
+        'embedding_downsample_hidden_size': 256,
+        'embedding_downsample_size': 4,
         'output_size':
             len(_get_locations({InputTypes.TARGET}, column_definition)),
         'category_counts':
