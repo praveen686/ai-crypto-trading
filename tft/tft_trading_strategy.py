@@ -28,14 +28,14 @@ class TFTStrategy:
             params["model_folder"] = model_folder
             self.opt_manager = HyperparamOptManager(
                 {k: [params[k]]
-                 for k in params}, fixed_params, model_folder)
+                 for k in params}, fixed_params, model_folder, False)
         else:
             model_folder = os.path.join(self.config.model_folder, "main")
             fixed_params = self.formatter.get_experiment_params()
             param_ranges = ModelClass.get_hyperparm_choices()
             fixed_params["model_folder"] = model_folder
             self.opt_manager = HyperparamOptManager(param_ranges, fixed_params,
-                                                    model_folder)
+                                                    model_folder, False)
 
         if use_gpu:
             self.tf_config = utils.get_default_tensorflow_config(
