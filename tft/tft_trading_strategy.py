@@ -2,6 +2,7 @@ import os
 import numpy as np
 
 import tensorflow.compat.v1 as tf
+import libs.hyperparam_opt
 import libs.tft_model
 import libs.utils as utils
 import expt_settings.configs
@@ -80,4 +81,5 @@ if __name__ == '__main__':
     use_gpu = True
 
     tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu)
-    inputs = np.random.randn(1, 10, 4)
+    inputs = np.random.randn(1, 10, 777)
+    tft_strategy.predict_batch(inputs)
