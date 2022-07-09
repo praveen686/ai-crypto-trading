@@ -158,8 +158,7 @@ class GenericDataFormatter(abc.ABC):
         tup[2] not in {InputTypes.ID, InputTypes.TIME}
     ]
     embedding_inputs = [
-        tup for tup in column_definition if tup[1] == DataTypes.CATEGORICAL and
-        tup[2] == InputTypes.EMBEDDING
+        tup for tup in column_definition if tup[2] == InputTypes.EMBEDDING
     ]
 
     return identifier + time + real_inputs + categorical_inputs + embedding_inputs

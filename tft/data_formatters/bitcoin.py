@@ -25,9 +25,7 @@ class BitcoinFormatter(GenericDataFormatter):
         # ('week_of_year', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         # ('month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
         #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
-    ]
-    for i in range(768):
-            _column_definition.append(('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING))
+    ] + [('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING) for i in range(768)]
 
     def __init__(self):
         """Initialises formatter."""
