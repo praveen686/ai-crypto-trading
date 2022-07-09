@@ -20,6 +20,7 @@ class TFTStrategy:
         self.use_gpu = use_gpu
         self.opt_manager = None
         self.tf_config = None
+        self.quantiles = [0.1, 0.5, 0.9]
 
         if fixed_param:
             model_folder = os.path.join(self.config.model_folder, "fixed")
