@@ -72,7 +72,7 @@ class TFTStrategy:
                 for i, q in enumerate(self.quantiles)
             }
 
-            print("Predict result: {}".format(process_map))
+        return process_map
 
 
 if __name__ == '__main__':
@@ -82,4 +82,5 @@ if __name__ == '__main__':
 
     tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu)
     inputs = np.random.randn(1, 10, 777)
-    tft_strategy.predict_batch(inputs)
+    predict_result = tft_strategy.predict_batch(inputs)
+    print(predict_result)
