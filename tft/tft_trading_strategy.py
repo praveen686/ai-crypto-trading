@@ -68,9 +68,7 @@ class TFTStrategy:
                                            batch_size=inputs.shape[0])
 
             process_map = {
-                'p{}'.format(int(q * 100)):
-                combined[Ellipsis,
-                         i * self.output_size:(i + 1) * self.output_size]
+                'p{}'.format(int(q * 100)): combined[Ellipsis, i:(i + 1)]
                 for i, q in enumerate(self.quantiles)
             }
 
