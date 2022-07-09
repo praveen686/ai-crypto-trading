@@ -55,6 +55,7 @@ class TFTStrategy:
         with tf.Graph().as_default(), tf.Session(
                 config=self.tf_config) as sess:
             tf.keras.backend.set_session(sess)
+            success = self.opt_manager.load_results()
             best_params = self.opt_manager.get_best_params()
             model = ModelClass(best_params, use_cudnn=self.use_gpu)
 
