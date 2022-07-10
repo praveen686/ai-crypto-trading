@@ -182,13 +182,13 @@ class BitcoinFormatter(GenericDataFormatter):
         """Returns default optimised model parameters."""
 
         model_params = {
-            'dropout_rate': 0.3,
-            'hidden_layer_size': 160,
-            'learning_rate': 0.01,
+            'dropout_rate': 0.4,
+            'hidden_layer_size': 240,
+            'learning_rate': 0.001,
             # 'minibatch_size': 64,
-            'minibatch_size': 64,
-            'max_gradient_norm': 0.01,
-            'num_heads': 1,
+            'minibatch_size': 128,
+            'max_gradient_norm': 1.0,
+            'num_heads': 4,
             'stack_size': 1
         }
 
