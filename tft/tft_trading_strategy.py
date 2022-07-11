@@ -6,6 +6,7 @@ import libs.hyperparam_opt
 import libs.tft_model
 import libs.utils as utils
 import expt_settings.configs
+import pandas as pd
 
 ExperimentConfig = expt_settings.configs.ExperimentConfig
 HyperparamOptManager = libs.hyperparam_opt.HyperparamOptManager
@@ -74,6 +75,11 @@ class TFTStrategy:
 
         return process_map
 
+    def execute_stratedy(self, pre):
+        data_folder = self.config.data_folder
+        csv_path = os.path.join(data_folder, 'bitcoin_his.csv')
+        df = pd.read_csv(csv_path, index_col=0)  # no explicit index
+        print(df)
 
 if __name__ == '__main__':
     expt_name = "bitcoin"
