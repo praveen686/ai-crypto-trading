@@ -98,7 +98,14 @@ def download_and_unzip(url, zip_path, csv_path, data_folder):
 def process_bitcoin(config):
 
     data_folder = config.data_folder
+
+    # download historical data csv
     csv_path = os.path.join(data_folder, 'bitcoin_his.csv')
+    url = 'https://raw.githubusercontent.com/CharlesPeng1998/ai-crypto-trading/develop/datasets/merge/result.csv'
+    download_from_url(url, csv_path)
+
+    # download historical data with embeddings
+    csv_path = os.path.join(data_folder, 'bitcoin_hisWithEmbs.csv')
     url = 'https://raw.githubusercontent.com/CharlesPeng1998/ai-crypto-trading/develop/datasets/data_embs/resultWithEmbs.csv'
     download_from_url(url, csv_path)
 
