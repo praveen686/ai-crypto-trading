@@ -1,6 +1,7 @@
 import data_formatters.base
 import libs.utils as utils
 import sklearn.preprocessing
+import numpy as np
 
 GenericDataFormatter = data_formatters.base.GenericDataFormatter
 DataTypes = data_formatters.base.DataTypes
@@ -62,6 +63,23 @@ class BitcoinFormatter(GenericDataFormatter):
         self.set_scalers(train)
 
         return (self.transform_inputs(data) for data in [train, valid, test])
+
+    def get_all_data(self, df):
+
+        """get all data from input data csv.
+
+           Args:
+                df:  Source data frame.
+        """
+        self.set_scalers(df)
+        arr = self.transform_inputs(df).to_numpy()
+        batch = []
+        n = len(arr)
+        for i in range(10, n + 1):
+            x = arr[i - 10:i, :]
+            batch.append(x)
+        print(batch)
+        return np.array(batch)
 
     def set_scalers(self, df):
         """Calibrates scalers using the data supplied.
