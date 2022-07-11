@@ -22,10 +22,11 @@ class BitcoinFormatter(GenericDataFormatter):
         ('symbol', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
         ('days_from_start', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
         # need to exist otherwise can not be extracted
-        ('day_of_week', DataTypes.CATEGORICAL, InputTypes.TIME),
-        ('day_of_month', DataTypes.CATEGORICAL, InputTypes.TIME),
-        ('week_of_year', DataTypes.CATEGORICAL, InputTypes.TIME),
-        ('month', DataTypes.CATEGORICAL, InputTypes.TIME),
+        ('day_of_week', DataTypes.DATE, InputTypes.TIME),
+        ('day_of_month', DataTypes.DATE, InputTypes.TIME),
+        ('week_of_year', DataTypes.DATE, InputTypes.TIME),
+        ('month', DataTypes.DATE, InputTypes.TIME),
+        ('year', DataTypes.DATE, InputTypes.TIME),
         #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
     ] + [('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING) for i in range(768)]
 
