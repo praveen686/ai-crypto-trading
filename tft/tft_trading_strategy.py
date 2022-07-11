@@ -79,14 +79,61 @@ class TFTStrategy:
         data_folder = self.config.data_folder
         csv_path = os.path.join(data_folder, 'bitcoin_his.csv')
         df = pd.read_csv(csv_path, index_col=0)  # no explicit index
+        #print(df)
+        principle = [10000 for _ in range(7)]
+        position = [0 for _ in range(7)]
+        cost = [0 for _ in range(7)]
+        n = len(pre)
+        for index in range(7, n):
+            curr_price = df.at[index-1, 'market_price']
+            pred_price = pre['p90'][index-7][0][0]
+            # execute buy
+            if position[-1] == 0:
+                if pred_price > curr_price:
+                    num = principle[-1]/curr_price
+                    position.append(num)
+                    principle.append(0)
+                    cost.append(curr_price)
+                else:
+                    position.append(0)
+                    principle.append(principle[-1])
+                    cost.append(0)
+            else: # execute sell
+                if pred_price < curr_price or round(curr_price/cost[-1]-1, 4) > 0.05 or round(curr_price/cost[-1]-1, 4) < -0.03:
+                    principle.append(position[-1]*curr_price)
+                    position.append(0)
+                    cost.append(0)
+                else:
+                    position.append(position[-1])
+                    principle.append(0)
+                    cost.append(cost[-1])
+        df['principle'] = principle
+        df['position'] = position
+        df['cost'] = cost
         print(df)
+        
+        
+	def get_input_data(self):
+		data_folder = self.config.data_folder
+    	csv_path = os.path.join(data_folder, 'bitcoin_hisWithEmbs.csv')
+    	df = pd.read_csv(csv_path, index_col=0)  # no explicit index
+    	
+    	arr = df.to_numpy()
+    	batch = []
+    	n = len(arr)
+    	for i in range(10, n+1):
+        	x = arr[i-10:i,:]
+        	batch.append(x)
+    	print(batch)
+    	return batch
 
 if __name__ == '__main__':
     expt_name = "bitcoin"
     output_folder = "../../tft_script"
     use_gpu = True
 
-    tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu)
-    inputs = np.random.randn(1, 10, 777)
+    tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu
+    #inputs = np.random.randn(1, 10, 777)
+    inputs = tft_strategy.get_input_data()
     predict_result = tft_strategy.predict_batch(inputs)
     print(predict_result)
