@@ -116,15 +116,15 @@ class TFTStrategy:
         data_folder = self.config.data_folder
         csv_path = os.path.join(data_folder, 'bitcoin_hisWithEmbs.csv')
         df = pd.read_csv(csv_path, index_col=0)  # no explicit index
-    	
         arr = df.to_numpy()
         batch = []
         n = len(arr)
         for i in range(10, n+1):
-            x = arr[i-10:i,:]
+            x = arr[i-10:i, :]
             batch.append(x)
         print(batch)
-        return batch
+        return np.array(batch)
+
 
 if __name__ == '__main__':
     expt_name = "bitcoin"
