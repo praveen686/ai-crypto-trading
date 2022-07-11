@@ -75,7 +75,7 @@ class BitcoinFormatter(GenericDataFormatter):
         """
         df['Date'] = pd.to_datetime(df['Date'], format="%Y/%m/%d")
         df['days_from_start'] = (df['Date'] - pd.datetime(2014, 1, 1)).apply(lambda x: x.days)
-        print("len:{0}, columns:{1}".format(len(df.columns.value), df.columns.value))
+        print("len:{0}, columns:{1}".format(len(df.columns.value), df.columns.values))
         self.set_scalers(df)
         arr = self.transform_inputs(df).to_numpy()
         batch = []
