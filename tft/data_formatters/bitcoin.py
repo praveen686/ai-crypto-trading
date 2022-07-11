@@ -21,13 +21,12 @@ class BitcoinFormatter(GenericDataFormatter):
         ('ex_trage_vol', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
         ('symbol', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
         ('days_from_start', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
-        # need to exist otherwise can not be extracted
-        ('day_of_week', DataTypes.DATE, InputTypes.TIME),
-        ('day_of_month', DataTypes.DATE, InputTypes.TIME),
-        ('week_of_year', DataTypes.DATE, InputTypes.TIME),
-        ('month', DataTypes.DATE, InputTypes.TIME),
-        ('year', DataTypes.DATE, InputTypes.TIME),
-        #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
+        # ('day_of_week', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
+        # ('day_of_month', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
+        # ('week_of_year', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
+        # ('month', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
+        # ('year', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
+        # ('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
     ] + [('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING) for i in range(768)]
 
     def __init__(self):
@@ -73,6 +72,7 @@ class BitcoinFormatter(GenericDataFormatter):
            Args:
                 df:  Source data frame.
         """
+        df.drop(['day_of_week', 'day_of_month', 'week_of_year', 'month', 'year'], axis=1, inplace=True)
         self.set_scalers(df)
         arr = self.transform_inputs(df).to_numpy()
         batch = []
