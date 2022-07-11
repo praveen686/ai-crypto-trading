@@ -21,10 +21,11 @@ class BitcoinFormatter(GenericDataFormatter):
         ('ex_trage_vol', DataTypes.REAL_VALUED, InputTypes.OBSERVED_INPUT),
         ('symbol', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
         ('days_from_start', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
-        # ('day_of_week', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
-        # ('day_of_month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
-        # ('week_of_year', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
-        # ('month', DataTypes.CATEGORICAL, InputTypes.KNOWN_INPUT),
+        # need to exist otherwise can not be extracted
+        ('day_of_week', DataTypes.CATEGORICAL, InputTypes.TIME),
+        ('day_of_month', DataTypes.CATEGORICAL, InputTypes.TIME),
+        ('week_of_year', DataTypes.CATEGORICAL, InputTypes.TIME),
+        ('month', DataTypes.CATEGORICAL, InputTypes.TIME),
         #('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
     ] + [('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING) for i in range(768)]
 
@@ -78,7 +79,7 @@ class BitcoinFormatter(GenericDataFormatter):
         for i in range(10, n + 1):
             x = arr[i - 10:i, :]
             batch.append(x)
-        print(batch)
+        print("batch sample:{0}".format(batch[-1]))
         return np.array(batch)
 
     def set_scalers(self, df):
