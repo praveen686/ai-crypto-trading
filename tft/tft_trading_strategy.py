@@ -112,27 +112,26 @@ class TFTStrategy:
         df['cost'] = cost
         print(df)
         
-        
-	def get_input_data(self):
-		data_folder = self.config.data_folder
-    	csv_path = os.path.join(data_folder, 'bitcoin_hisWithEmbs.csv')
-    	df = pd.read_csv(csv_path, index_col=0)  # no explicit index
+    def get_input_data(self):
+        data_folder = self.config.data_folder
+        csv_path = os.path.join(data_folder, 'bitcoin_hisWithEmbs.csv')
+        df = pd.read_csv(csv_path, index_col=0)  # no explicit index
     	
-    	arr = df.to_numpy()
-    	batch = []
-    	n = len(arr)
-    	for i in range(10, n+1):
-        	x = arr[i-10:i,:]
-        	batch.append(x)
-    	print(batch)
-    	return batch
+        arr = df.to_numpy()
+        batch = []
+        n = len(arr)
+        for i in range(10, n+1):
+            x = arr[i-10:i,:]
+            batch.append(x)
+        print(batch)
+        return batch
 
 if __name__ == '__main__':
     expt_name = "bitcoin"
     output_folder = "../../tft_script"
     use_gpu = True
 
-    tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu
+    tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu)
     #inputs = np.random.randn(1, 10, 777)
     inputs = tft_strategy.get_input_data()
     predict_result = tft_strategy.predict_batch(inputs)
