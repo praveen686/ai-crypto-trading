@@ -113,9 +113,7 @@ class TFTStrategy:
         print(df)
         
     def get_input_data(self):
-        data_folder = self.config.data_folder
-        csv_path = os.path.join(data_folder, 'bitcoin_hisWithEmbs.csv')
-        df = pd.read_csv(csv_path, index_col=0)  # no explicit index
+        df = pd.read_csv(self.config.data_csv_path, index_col=0)  # no explicit index
         return self.formatter.get_all_data(df)
 
 
