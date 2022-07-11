@@ -2,6 +2,7 @@ import data_formatters.base
 import libs.utils as utils
 import sklearn.preprocessing
 import numpy as np
+import pandas as pd
 
 GenericDataFormatter = data_formatters.base.GenericDataFormatter
 DataTypes = data_formatters.base.DataTypes
@@ -72,7 +73,8 @@ class BitcoinFormatter(GenericDataFormatter):
            Args:
                 df:  Source data frame.
         """
-        df.drop(['day_of_week', 'day_of_month', 'week_of_year', 'month', 'year'], axis=1, inplace=True)
+        df['Date'] = pd.to_datetime(df['Date'], format="%Y/%m/%d")
+        df['days_from_start'] = (df['Date'] - pd.datetime(2014, 1, 1)).apply(lambda x: x.days)
         self.set_scalers(df)
         arr = self.transform_inputs(df).to_numpy()
         batch = []
