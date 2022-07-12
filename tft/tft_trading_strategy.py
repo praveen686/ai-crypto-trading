@@ -57,8 +57,9 @@ class TFTStrategy:
             model.load(self.opt_manager.hyperparam_folder)
 
             raw_data = pd.read_csv(self.config.data_csv_path, index_col=0)
-            inputs = self.formatter.get_all_data(raw_data)
-            output_map = model.predict(inputs, return_targets=True)
+            # inputs = self.formatter.get_all_data(raw_data)
+            train, valid, test = self.formatter.split_data(raw_data)
+            output_map = model.predict(test, return_targets=True)
             p50_forecast = self.formatter.format_predictions(output_map["p50"])
             p90_forecast = self.formatter.format_predictions(output_map["p90"])
             p90_forecast.to_csv("output.csv")
