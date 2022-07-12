@@ -23,7 +23,7 @@ class TFTStrategy:
         self.opt_manager = None
         self.tf_config = None
         self.quantiles = [0.1, 0.5, 0.9]
-        self.fixex_param = fixed_param 
+        self.fixed_param = fixed_param 
 
         if use_gpu:
             self.tf_config = utils.get_default_tensorflow_config(
