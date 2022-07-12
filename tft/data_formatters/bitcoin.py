@@ -67,26 +67,9 @@ class BitcoinFormatter(GenericDataFormatter):
         return (self.transform_inputs(data) for data in [train, valid, test])
 
     def get_all_data(self, df):
-
-        """get all data from input data csv.
-
-           Args:
-                df:  Source data frame.
-        """
-        df['Date'] = pd.to_datetime(df['Date'], format="%Y/%m/%d")
-        df['days_from_start'] = (df['Date'] - pd.datetime(2014, 1, 1)).apply(lambda x: x.days)
-        print("len:{0}, columns:{1}".format(len(df.columns.values), df.columns.values))
-        self.set_scalers(df)
-        output = self.transform_inputs(df)
-        arr = output.to_numpy()
-        print("len:{0}, columns:{1}".format(len(output.columns.values), output.columns.values))
-        batch = []
-        n = len(arr)
-        for i in range(10, n + 1):
-            x = arr[i - 10:i, :]
-            batch.append(x)
-        print("batch sample:{0}".format(batch[-1]))
-        return np.array(batch)
+        all_data = df.loc[:]
+        self.set_scalers(all_data)
+        return self.transform_inputs(all_data)
 
     def set_scalers(self, df):
         """Calibrates scalers using the data supplied.

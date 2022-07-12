@@ -46,13 +46,7 @@ class TFTStrategy:
             self.tf_config = utils.get_default_tensorflow_config(
                 tf_device="cpu")
 
-    def predict_batch(self, inputs):
-        """
-        The inputs should have shape of (batch_size, time_steps, input_size)
-        """
-        print("****** Running prediction ******")
-        print("The shape of inputs: {}".format(inputs.shape))
-
+    def predict_all(self):
         tf.reset_default_graph()
         with tf.Graph().as_default(), tf.Session(
                 config=self.tf_config) as sess:
@@ -60,20 +54,14 @@ class TFTStrategy:
             success = self.opt_manager.load_results()
             best_params = self.opt_manager.get_best_params()
             model = ModelClass(best_params, use_cudnn=self.use_gpu)
-
             model.load(self.opt_manager.hyperparam_folder)
 
-            combined = model.model.predict(inputs,
-                                           workers=16,
-                                           use_multiprocessing=True,
-                                           batch_size=inputs.shape[0])
-
-            process_map = {
-                'p{}'.format(int(q * 100)): combined[Ellipsis, i:(i + 1)]
-                for i, q in enumerate(self.quantiles)
-            }
-
-        return process_map
+            raw_data = pd.read_csv(self.config.data_csv_path, index_col=0)
+            inputs = self.formatter.get_all_data(raw_data)
+            output_map = model.predict(inputs, return_targets=True)
+            p50_forecast = self.formatter.format_predictions(output_map["p50"])
+            p90_forecast = self.formatter.format_predictions(output_map["p90"])
+            p90_forecast.to_csv("output.csv")
 
     def execute_stratedy(self, pre):
         data_folder = self.config.data_folder
@@ -126,6 +114,7 @@ if __name__ == '__main__':
 
     tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu)
     #inputs = np.random.randn(1, 10, 777)
-    inputs = tft_strategy.get_input_data()
-    predict_result = tft_strategy.predict_batch(inputs)
-    print(tft_strategy.formatter.format_predictions(predict_result))
+    # inputs = tft_strategy.get_input_data()
+    # predict_result = tft_strategy.predict_batch(inputs)
+    # print(tft_strategy.formatter.format_predictions(predict_result))
+    tft_strategy.predict_all()
