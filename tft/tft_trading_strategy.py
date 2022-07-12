@@ -1,4 +1,5 @@
 import os
+from sre_parse import fix_flags
 import numpy as np
 
 import tensorflow.compat.v1 as tf
@@ -22,22 +23,7 @@ class TFTStrategy:
         self.opt_manager = None
         self.tf_config = None
         self.quantiles = [0.1, 0.5, 0.9]
-
-        if fixed_param:
-            model_folder = os.path.join(self.config.model_folder, "fixed")
-            fixed_params = self.formatter.get_experiment_params()
-            params = self.formatter.get_default_model_params()
-            params["model_folder"] = model_folder
-            self.opt_manager = HyperparamOptManager(
-                {k: [params[k]]
-                 for k in params}, fixed_params, model_folder, False)
-        else:
-            model_folder = os.path.join(self.config.model_folder, "main")
-            fixed_params = self.formatter.get_experiment_params()
-            param_ranges = ModelClass.get_hyperparm_choices()
-            fixed_params["model_folder"] = model_folder
-            self.opt_manager = HyperparamOptManager(param_ranges, fixed_params,
-                                                    model_folder, False)
+        self.fixex_param = fixed_param 
 
         if use_gpu:
             self.tf_config = utils.get_default_tensorflow_config(
@@ -47,19 +33,37 @@ class TFTStrategy:
                 tf_device="cpu")
 
     def predict_all(self):
+        raw_data = pd.read_csv(self.config.data_csv_path, index_col=0)
+        inputs = self.formatter.get_all_data(raw_data)
+
         tf.reset_default_graph()
         with tf.Graph().as_default(), tf.Session(
                 config=self.tf_config) as sess:
             tf.keras.backend.set_session(sess)
+
+            if self.fixed_param:
+                model_folder = os.path.join(self.config.model_folder, "fixed")
+                fixed_params = self.formatter.get_experiment_params()
+                params = self.formatter.get_default_model_params()
+                params["model_folder"] = model_folder
+                self.opt_manager = HyperparamOptManager(
+                    {k: [params[k]]
+                    for k in params}, fixed_params, model_folder)
+            else:
+                model_folder = os.path.join(self.config.model_folder, "main")
+                fixed_params = self.formatter.get_experiment_params()
+                param_ranges = ModelClass.get_hyperparm_choices()
+                fixed_params["model_folder"] = model_folder
+                self.opt_manager = HyperparamOptManager(param_ranges, fixed_params,
+                                                        model_folder)
+
             success = self.opt_manager.load_results()
             best_params = self.opt_manager.get_best_params()
             model = ModelClass(best_params, use_cudnn=self.use_gpu)
             model.load(self.opt_manager.hyperparam_folder)
 
-            raw_data = pd.read_csv(self.config.data_csv_path, index_col=0)
-            # inputs = self.formatter.get_all_data(raw_data)
-            train, valid, test = self.formatter.split_data(raw_data)
-            output_map = model.predict(test, return_targets=True)
+            
+            output_map = model.predict(inputs, return_targets=True)
             p50_forecast = self.formatter.format_predictions(output_map["p50"])
             p90_forecast = self.formatter.format_predictions(output_map["p90"])
             p90_forecast.to_csv("output.csv")
