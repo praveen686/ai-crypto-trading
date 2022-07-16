@@ -68,7 +68,7 @@ class TFTStrategy:
             p90_forecast = self.formatter.format_predictions(output_map["p90"])
             p90_forecast.to_csv("output.csv")
 
-    def execute_stratedy(self, pre):
+    def execute_strategy(self):
         data_folder = self.config.data_folder
         csv_path = os.path.join(data_folder, 'bitcoin_his.csv')
         data = pd.read_csv(csv_path, index_col=False)  # no explicit index
@@ -91,9 +91,10 @@ class TFTStrategy:
             day = data.at[index, 'Date']
             curr_price = data.at[index, 'market_price']
             pred_price = pre.loc[pre['forecast_time'] == day, 't+0'].values
-            if not pred_price or len(pred_price) == 0:
+            if pred_price.size == 0:
                 continue
-            print("date:{0}----cur:{1}-----pred:{2}".format(day, curr_price, pred_price[0]))
+            pred_price = pred_price[0]
+            print("date:{0}----cur:{1}-----pred:{2}".format(day, curr_price, pred_price))
             # execute buy
             if position[-1] == 0:
                 if pred_price > curr_price:
@@ -118,7 +119,7 @@ class TFTStrategy:
                     cost.append(cost[-1])
             date.append(day)
             market_price.append(curr_price)
-            predict_price.append(pred_price[0])
+            predict_price.append(pred_price)
             profit.append(round((cost[-1] * position[-1] + principle[-1]) / principle[0] - 1, 4))
 
         res['date'] = date
@@ -150,3 +151,4 @@ if __name__ == '__main__':
     # predict_result = tft_strategy.predict_batch(inputs)
     # print(tft_strategy.formatter.format_predictions(predict_result))
     tft_strategy.predict_all()
+    tft_strategy.execute_strategy()
