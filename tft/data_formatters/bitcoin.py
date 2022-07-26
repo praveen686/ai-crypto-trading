@@ -40,7 +40,7 @@ class BitcoinFormatter(GenericDataFormatter):
         self._num_classes_per_cat_input = None
 
 
-    def split_data(self, df, valid_boundary=2021, test_boundary=2022):
+    def split_data(self, df, valid_boundary=2019, test_boundary=2022):
         """Splits data frame into training-validation-test data frames.
 
         This also calibrates scaling object, and transforms data for each split.
@@ -58,8 +58,9 @@ class BitcoinFormatter(GenericDataFormatter):
 
 
         index = df['year']
-        train = df.loc[index < valid_boundary]
-        valid = df.loc[(index >= valid_boundary) & (index < test_boundary)]
+        # train = df.loc[index < valid_boundary]
+        train = df.loc[:]
+        valid = df.loc[(index >= valid_boundary) & (index <= test_boundary)]
         test = df.loc[(index >= test_boundary)]
 
         self.set_scalers(train)
