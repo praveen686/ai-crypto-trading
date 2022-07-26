@@ -8,6 +8,7 @@ import libs.tft_model
 import libs.utils as utils
 import expt_settings.configs
 import pandas as pd
+import matplotlib.pyplot as plt
 
 ExperimentConfig = expt_settings.configs.ExperimentConfig
 HyperparamOptManager = libs.hyperparam_opt.HyperparamOptManager
@@ -131,6 +132,7 @@ class TFTStrategy:
         res['profit'] = profit
         res = pd.DataFrame(res)
         res.to_csv('backtesting.csv')
+        return res
         #print(res)
         
     def get_input_data(self):
@@ -138,6 +140,21 @@ class TFTStrategy:
         csv_path = os.path.join(data_folder, 'bitcoin_hisWithEmbs.csv')
         df = pd.read_csv(csv_path, index_col=0)  # no explicit index
         return self.formatter.get_all_data(df)
+
+    def print_graph(self, data):
+        x = data.date.values
+        y = data.profit.values
+        ave_month = [0] * len(x)
+        ave_season = [0] * len(x)
+        for i in range(len(x)):
+            if i > 27:
+                ave_month[i] = round(sum(y[i - 28:i]) / 28, 2)
+                if i > 119:
+                    ave_season[i] = round(sum(y[i - 120:i]) / 120, 2)
+        plt.figure(figsize=(10, 6))
+        plt.plot(x, y, color='#FF0000', label='profit', linewidth=3.0)
+        plt.plot(x, ave_month, color='green', label='ave_month', linewidth=1.0)
+        plt.plot(x, ave_season, color='blue', label='ave_season', linewidth=1.0)
 
 
 if __name__ == '__main__':
@@ -151,4 +168,5 @@ if __name__ == '__main__':
     # predict_result = tft_strategy.predict_batch(inputs)
     # print(tft_strategy.formatter.format_predictions(predict_result))
     tft_strategy.predict_all()
-    tft_strategy.execute_strategy()
+    profit = tft_strategy.execute_strategy()
+    tft_strategy.print_graph(profit)
