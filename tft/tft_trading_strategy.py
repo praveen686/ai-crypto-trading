@@ -151,4 +151,4 @@ if __name__ == '__main__':
     # predict_result = tft_strategy.predict_batch(inputs)
     # print(tft_strategy.formatter.format_predictions(predict_result))
     tft_strategy.predict_all()
-    tft_strategy.execute_strategy()
+    # tft_strategy.execute_strategy()
