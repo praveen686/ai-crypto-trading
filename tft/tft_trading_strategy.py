@@ -162,7 +162,7 @@ if __name__ == '__main__':
     output_folder = "../../tft_script"
     use_gpu = True
 
-    tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu)
+    tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu, False)
     #inputs = np.random.randn(1, 10, 777)
     # inputs = tft_strategy.get_input_data()
     # predict_result = tft_strategy.predict_batch(inputs)
