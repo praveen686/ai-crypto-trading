@@ -87,8 +87,10 @@ class TFTStrategy:
         position = [0]
         cost = [0]
         profit = [0]
+        basic = [0]
         start, n = min(data['index'].values), data.shape[0]
-        print("---------n:{}, start:{}".format(n, start))
+        init = data.at[start, 'market_price']
+        #print("---------n:{}, start:{}".format(n, start))
 
         for index in range(start - 1, n + start - 1):
             day = data.at[index, 'Date']
@@ -111,8 +113,8 @@ class TFTStrategy:
                     principle.append(principle[-1])
                     cost.append(0)
             else:  # execute sell
-                if pred_price < curr_price or round(curr_price / cost[-1] - 1, 4) > 0.05 or round(
-                        curr_price / cost[-1] - 1, 4) < -0.03:
+                if pred_price < curr_price or round(curr_price / cost[-1] - 1, 4) > 0.3 or round(
+                        curr_price / cost[-1] - 1, 4) < -0.2:
                     principle.append(position[-1] * curr_price)
                     position.append(0)
                     cost.append(0)
@@ -124,6 +126,7 @@ class TFTStrategy:
             market_price.append(curr_price)
             predict_price.append(pred_price)
             profit.append(round((cost[-1] * position[-1] + principle[-1]) / principle[0] - 1, 4))
+            basic.append(round((curr_price - init) / init, 4))
 
         res['date'] = date
         res['market_price'] = market_price
@@ -132,6 +135,7 @@ class TFTStrategy:
         res['position'] = position
         res['cost'] = cost
         res['profit'] = profit
+        res['basic'] = basic
         res = pd.DataFrame(res)
         res.to_csv('backtesting.csv')
         return res
@@ -146,6 +150,7 @@ class TFTStrategy:
     def print_graph(self, data):
         x = data.date.values
         y = data.profit.values
+        basic = data.basic.values
         ave_month = [0] * len(x)
         ave_season = [0] * len(x)
         for i in range(len(x)):
@@ -154,9 +159,14 @@ class TFTStrategy:
                 if i > 119:
                     ave_season[i] = round(sum(y[i - 120:i]) / 120, 2)
         plt.figure(figsize=(10, 6))
-        plt.plot(x, y, color='#FF0000', label='profit', linewidth=3.0)
+        plt.plot(x, y, color='#FF0000', label='trading-strategy', linewidth=3.0)
         plt.plot(x, ave_month, color='green', label='ave_month', linewidth=1.0)
         plt.plot(x, ave_season, color='blue', label='ave_season', linewidth=1.0)
+        plt.plot(x, basic, color='yellow', label='basic', linewidth=1.0)
+
+        plt.legend()
+        plt.xlabel('date')
+        plt.ylabel('profit')
 
 
 if __name__ == '__main__':
