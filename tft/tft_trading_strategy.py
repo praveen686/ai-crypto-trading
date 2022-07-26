@@ -60,9 +60,6 @@ class TFTStrategy:
 
             success = self.opt_manager.load_results()
             best_params = self.opt_manager.get_best_params()
-
-            print("Best param: {}".format(best_params))
-
             model = ModelClass(best_params, use_cudnn=self.use_gpu)
             model.load(self.opt_manager.hyperparam_folder)
 
@@ -71,6 +68,8 @@ class TFTStrategy:
             p50_forecast = self.formatter.format_predictions(output_map["p50"])
             p90_forecast = self.formatter.format_predictions(output_map["p90"])
             p90_forecast.to_csv("output.csv")
+
+            return best_params
 
     def execute_strategy(self):
         data_folder = self.config.data_folder
@@ -170,7 +169,8 @@ if __name__ == '__main__':
     # inputs = tft_strategy.get_input_data()
     # predict_result = tft_strategy.predict_batch(inputs)
     # print(tft_strategy.formatter.format_predictions(predict_result))
-    tft_strategy.predict_all()
+    best_params = tft_strategy.predict_all()
+    print("Best params: {}".format(best_params))
     # tft_strategy.execute_strategy()
     # profit = tft_strategy.execute_strategy()
     # tft_strategy.print_graph(profit)
