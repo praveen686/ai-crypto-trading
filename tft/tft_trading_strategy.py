@@ -60,6 +60,9 @@ class TFTStrategy:
 
             success = self.opt_manager.load_results()
             best_params = self.opt_manager.get_best_params()
+
+            print("Best param: {}".format(best_params))
+
             model = ModelClass(best_params, use_cudnn=self.use_gpu)
             model.load(self.opt_manager.hyperparam_folder)
 
