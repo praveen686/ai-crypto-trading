@@ -8,6 +8,7 @@ import libs.tft_model
 import libs.utils as utils
 import expt_settings.configs
 import pandas as pd
+import datetime
 import matplotlib.pyplot as plt
 
 ExperimentConfig = expt_settings.configs.ExperimentConfig
@@ -100,8 +101,9 @@ class TFTStrategy:
 
         for index in range(start - 1, n + start - 1):
             day = data.at[index, 'Date']
+            next_day = (datetime.datetime.strptime(day, '%Y-%m-%d') + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
             curr_price = data.at[index, 'market_price']
-            pred_price = pre.loc[pre['forecast_time'] == day, 't+0'].values
+            pred_price = pre.loc[pre['forecast_time'] == next_day, 't+0'].values
             if pred_price.size == 0:
                 continue
             pred_price = pred_price[0]
