@@ -233,7 +233,7 @@ if __name__ == '__main__':
     output_folder = "../../tft_script"
     use_gpu = True
 
-    tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu, False)
+    tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu, True)
     best_params = tft_strategy.predict_all()
     tft_strategy.execute_strategy()
     profit = tft_strategy.execute_strategy()

@@ -95,51 +95,6 @@ def main(expt_name,
 
       tf.keras.backend.set_session(default_keras_session)
 
-  print("*** Running tests ***")
-  tf.reset_default_graph()
-  with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
-    tf.keras.backend.set_session(sess)
-    best_params = opt_manager.get_best_params()
-    model = ModelClass(best_params, use_cudnn=use_gpu)
-
-    model.load(opt_manager.hyperparam_folder)
-
-    print("Computing best validation loss")
-    val_loss = model.evaluate(valid)
-
-    print("Computing test loss")
-    output_map = model.predict(test, return_targets=True)
-    targets = data_formatter.format_predictions(output_map["targets"])
-    p50_forecast = data_formatter.format_predictions(output_map["p50"])
-    p90_forecast = data_formatter.format_predictions(output_map["p90"])
-
-    def extract_numerical_data(data):
-      """Strips out forecast time and identifier columns."""
-      return data[[
-          col for col in data.columns
-          if col not in {"forecast_time", "identifier"}
-      ]]
-
-    p50_loss = utils.numpy_normalised_quantile_loss(
-        extract_numerical_data(targets), extract_numerical_data(p50_forecast),
-        0.5)
-    p90_loss = utils.numpy_normalised_quantile_loss(
-        extract_numerical_data(targets), extract_numerical_data(p90_forecast),
-        0.9)
-
-    tf.keras.backend.set_session(default_keras_session)
-
-  print("Training completed @ {}".format(dte.datetime.now()))
-  print("Best validation loss = {}".format(val_loss))
-  print("Params:")
-
-  for k in best_params:
-    print(k, " = ", best_params[k])
-  print()
-  print("Normalised Quantile Loss for Test Data: P50={}, P90={}".format(
-      p50_loss.mean(), p90_loss.mean()))
-
-
 if __name__ == "__main__":
 
   def get_args():
