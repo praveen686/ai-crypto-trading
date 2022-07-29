@@ -5,4 +5,5 @@ tensorflow-probability>=0.8.0
 wget>=3.2
 pyunpack>=0.1.2
 patool>=1.12
+tensorflow-gpu==1.15.*
 

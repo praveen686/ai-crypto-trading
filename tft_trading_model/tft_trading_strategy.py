@@ -234,12 +234,7 @@ if __name__ == '__main__':
     use_gpu = True
 
     tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu, False)
-    #inputs = np.random.randn(1, 10, 777)
-    # inputs = tft_strategy.get_input_data()
-    # predict_result = tft_strategy.predict_batch(inputs)
-    # print(tft_strategy.formatter.format_predictions(predict_result))
     best_params = tft_strategy.predict_all()
-    print("Best params: {}".format(best_params))
-    # tft_strategy.execute_strategy()
-    # profit = tft_strategy.execute_strategy()
-    # tft_strategy.print_graph(profit)
+    tft_strategy.execute_strategy()
+    profit = tft_strategy.execute_strategy()
+    tft_strategy.print_graph(profit)

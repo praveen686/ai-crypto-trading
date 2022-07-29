@@ -1,33 +1,3 @@
-# coding=utf-8
-# Copyright 2022 The Google Research Authors.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-"""Trains TFT based on a defined set of parameters.
-
-Uses default parameters supplied from the configs file to train a TFT model from
-scratch.
-
-Usage:
-python3 script_train_fixed_params {expt_name} {output_folder}
-
-Command line args:
-  expt_name: Name of dataset/experiment to train.
-  output_folder: Root folder in which experiment is saved
-
-
-"""
-
 import argparse
 import datetime as dte
 import os
@@ -52,19 +22,6 @@ def main(expt_name,
          data_csv_path,
          data_formatter,
          use_testing_mode=False):
-  """Trains tft based on defined model params.
-
-  Args:
-    expt_name: Name of experiment
-    use_gpu: Whether to run tensorflow with GPU operations
-    model_folder: Folder path where models are serialized
-    data_csv_path: Path to csv file containing data
-    data_formatter: Dataset-specific data fromatter (see
-      expt_settings.dataformatter.GenericDataFormatter)
-    use_testing_mode: Uses a smaller models and data sizes for testing purposes
-      only -- switch to False to use original default settings
-  """
-
   num_repeats = 1
 
   if not isinstance(data_formatter, data_formatters.base.GenericDataFormatter):
@@ -186,8 +143,6 @@ def main(expt_name,
 if __name__ == "__main__":
 
   def get_args():
-    """Gets settings from command line."""
-
     experiment_names = ExperimentConfig.default_experiments
 
     parser = argparse.ArgumentParser(description="Data download configs")
@@ -228,11 +183,10 @@ if __name__ == "__main__":
   config = ExperimentConfig(name, output_folder)
   formatter = config.make_data_formatter()
 
-  # Customise inputs to main() for new datasets.
   main(
       expt_name=name,
       use_gpu=use_tensorflow_with_gpu,
       model_folder=os.path.join(config.model_folder, "fixed"),
       data_csv_path=config.data_csv_path,
       data_formatter=formatter,
-      use_testing_mode=False)  # Change to false to use original default params
+      use_testing_mode=False)  
