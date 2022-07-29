@@ -230,7 +230,7 @@ class TFTStrategy:
 
 if __name__ == '__main__':
     expt_name = "bitcoin"
-    output_folder = "../../tft_script"
+    output_folder = "tft_output"
     use_gpu = True
 
     tft_strategy = TFTStrategy(expt_name, output_folder, use_gpu, True)
