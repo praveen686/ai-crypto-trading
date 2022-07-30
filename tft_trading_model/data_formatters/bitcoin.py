@@ -31,8 +31,6 @@ class BitcoinFormatter(GenericDataFormatter):
     ] + [('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING) for i in range(768)]
 
     def __init__(self):
-        """Initialises formatter."""
-
         self.identifiers = None
         self._real_scalers = None
         self._cat_scalers = None
@@ -41,19 +39,6 @@ class BitcoinFormatter(GenericDataFormatter):
 
 
     def split_data(self, df, valid_boundary=2019, test_boundary=2022):
-        """Splits data frame into training-validation-test data frames.
-
-        This also calibrates scaling object, and transforms data for each split.
-
-        Args:
-          df: Source data frame to split.
-          valid_boundary: Starting year for validation data
-          test_boundary: Starting year for test data
-
-        Returns:
-          Tuple of transformed (train, valid, test) data.
-        """
-
         print('Formatting train-valid-test splits.')
 
 
@@ -73,11 +58,6 @@ class BitcoinFormatter(GenericDataFormatter):
         return self.transform_inputs(all_data)
 
     def set_scalers(self, df):
-        """Calibrates scalers using the data supplied.
-
-        Args:
-          df: Data to use to calibrate scalers.
-        """
         print('Setting scalers with training data...')
 
         column_definitions = self.get_column_definition()
@@ -118,17 +98,6 @@ class BitcoinFormatter(GenericDataFormatter):
         self._num_classes_per_cat_input = num_classes
 
     def transform_inputs(self, df):
-        """Performs feature transformations.
-
-        This includes both feature engineering, preprocessing and normalisation.
-
-        Args:
-          df: Data frame to transform.
-
-        Returns:
-          Transformed data frame.
-
-        """
         output = df.copy()
 
         if self._real_scalers is None and self._cat_scalers is None:
@@ -155,14 +124,6 @@ class BitcoinFormatter(GenericDataFormatter):
         return output
 
     def format_predictions(self, predictions):
-        """Reverts any normalisation to give predictions in original scale.
-
-        Args:
-          predictions: Dataframe of model predictions.
-
-        Returns:
-          Data frame of unnormalised predictions.
-        """
         output = predictions.copy()
 
         column_names = predictions.columns
@@ -175,8 +136,6 @@ class BitcoinFormatter(GenericDataFormatter):
 
     # Default params
     def get_fixed_params(self):
-        """Returns fixed model parameters for experiments."""
-
         fixed_params = {
             'total_time_steps': 10,
             'num_encoder_steps': 7,
@@ -188,8 +147,6 @@ class BitcoinFormatter(GenericDataFormatter):
         return fixed_params
 
     def get_default_model_params(self):
-        """Returns default optimised model parameters."""
-
         model_params = {
             'dropout_rate': 0.5,
             'hidden_layer_size': 20,

@@ -12,7 +12,7 @@ python3 -m script_train_fixed_params bitcoin tft_output yes
 # Hyperparameters tuning
 Modify data_formatters/bitcoin.py line 190
 
-# Run backtesting
+# Run backtesting (In order to diaplay the profit plot, GUI is required)
 python tft_trading_strategy.py
 
 # References
