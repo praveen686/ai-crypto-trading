@@ -1,8 +1,8 @@
 # Environments setup
 conda create -n tft_trading python=3.7
 conda activate tft_trading
-pip3 install -r requirements.txt
 cd tft_trading_model
+pip3 install -r requirements.txt
 
 # Download and construct datesets
 python3 -m script_download_data bitcoin tft_output
