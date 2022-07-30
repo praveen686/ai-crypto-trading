@@ -1,0 +1,11 @@
+numpy>=1.17.4
+pandas>=0.25.3
+scikit-learn>=0.22
+tensorflow-probability>=0.8.0
+wget>=3.2
+pyunpack>=0.1.2
+patool>=1.12
+tensorflow-gpu==1.15.*
+protobuf==3.20
+matplotlib
+
