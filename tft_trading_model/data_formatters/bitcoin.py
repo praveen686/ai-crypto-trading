@@ -28,7 +28,8 @@ class BitcoinFormatter(GenericDataFormatter):
         # ('month', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
         # ('year', DataTypes.REAL_VALUED, InputTypes.KNOWN_INPUT),
         # ('Region', DataTypes.CATEGORICAL, InputTypes.STATIC_INPUT),
-    ] + [('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING) for i in range(768)]
+    ] + [('emb{}'.format(i), DataTypes.REAL_VALUED, InputTypes.EMBEDDING)
+         for i in range(768)]
 
     def __init__(self):
         self.identifiers = None
@@ -37,10 +38,8 @@ class BitcoinFormatter(GenericDataFormatter):
         self._target_scaler = None
         self._num_classes_per_cat_input = None
 
-
     def split_data(self, df, valid_boundary=2019, test_boundary=2022):
         print('Formatting train-valid-test splits.')
-
 
         index = df['year']
         # train = df.loc[index < valid_boundary]
@@ -63,8 +62,8 @@ class BitcoinFormatter(GenericDataFormatter):
         column_definitions = self.get_column_definition()
         id_column = utils.get_single_col_by_input_type(InputTypes.ID,
                                                        column_definitions)
-        target_column = utils.get_single_col_by_input_type(InputTypes.TARGET,
-                                                           column_definitions)
+        target_column = utils.get_single_col_by_input_type(
+            InputTypes.TARGET, column_definitions)
 
         # Extract identifiers in case required
         self.identifiers = list(df[id_column].unique())
@@ -89,8 +88,8 @@ class BitcoinFormatter(GenericDataFormatter):
         for col in categorical_inputs:
             # Set all to str so that we don't have mixed integer/string columns
             srs = df[col].apply(str)
-            categorical_scalers[col] = sklearn.preprocessing.LabelEncoder().fit(
-                srs.values)
+            categorical_scalers[col] = sklearn.preprocessing.LabelEncoder(
+            ).fit(srs.values)
             num_classes.append(srs.nunique())
 
         # # Set categorical scaler outputs
@@ -114,7 +113,8 @@ class BitcoinFormatter(GenericDataFormatter):
             {InputTypes.ID, InputTypes.TIME})
 
         # Format real inputs
-        output[real_inputs] = self._real_scalers.transform(df[real_inputs].values)
+        output[real_inputs] = self._real_scalers.transform(
+            df[real_inputs].values)
 
         # Format categorical inputs
         for col in categorical_inputs:
@@ -130,7 +130,8 @@ class BitcoinFormatter(GenericDataFormatter):
 
         for col in column_names:
             if col not in {'forecast_time', 'identifier'}:
-                output[col] = self._target_scaler.inverse_transform(predictions[col].values.reshape(-1, 1))
+                output[col] = self._target_scaler.inverse_transform(
+                    predictions[col].values.reshape(-1, 1))
 
         return output
 

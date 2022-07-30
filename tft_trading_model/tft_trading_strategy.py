@@ -25,7 +25,7 @@ class TFTStrategy:
         self.opt_manager = None
         self.tf_config = None
         self.quantiles = [0.1, 0.5, 0.9]
-        self.fixed_param = fixed_param 
+        self.fixed_param = fixed_param
 
         if use_gpu:
             self.tf_config = utils.get_default_tensorflow_config(
@@ -50,21 +50,20 @@ class TFTStrategy:
                 params["model_folder"] = model_folder
                 self.opt_manager = HyperparamOptManager(
                     {k: [params[k]]
-                    for k in params}, fixed_params, model_folder)
+                     for k in params}, fixed_params, model_folder)
             else:
                 model_folder = os.path.join(self.config.model_folder, "main")
                 fixed_params = self.formatter.get_experiment_params()
                 param_ranges = ModelClass.get_hyperparm_choices()
                 fixed_params["model_folder"] = model_folder
-                self.opt_manager = HyperparamOptManager(param_ranges, fixed_params,
-                                                        model_folder)
+                self.opt_manager = HyperparamOptManager(
+                    param_ranges, fixed_params, model_folder)
 
             success = self.opt_manager.load_results()
             best_params = self.opt_manager.get_best_params()
             model = ModelClass(best_params, use_cudnn=self.use_gpu)
             model.load(self.opt_manager.hyperparam_folder)
 
-            
             output_map = model.predict(inputs, return_targets=True)
             p50_forecast = self.formatter.format_predictions(output_map["p50"])
             p90_forecast = self.formatter.format_predictions(output_map["p90"])
@@ -101,9 +100,11 @@ class TFTStrategy:
 
         for index in range(start - 1, n + start - 1):
             day = data.at[index, 'Date']
-            next_day = (datetime.datetime.strptime(day, '%Y-%m-%d') + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+            next_day = (datetime.datetime.strptime(day, '%Y-%m-%d') +
+                        datetime.timedelta(days=1)).strftime('%Y-%m-%d')
             curr_price = data.at[index, 'market_price']
-            pred_price = pre.loc[pre['forecast_time'] == next_day, 't+0'].values
+            pred_price = pre.loc[pre['forecast_time'] == next_day,
+                                 't+0'].values
             if pred_price.size == 0:
                 continue
             pred_price = pred_price[0]
@@ -122,8 +123,9 @@ class TFTStrategy:
                     principle.append(principle[-1])
                     cost.append(0)
             else:  # execute sell
-                if pred_price < curr_price or round(curr_price / cost[-1] - 1, 4) > 0.3 or round(
-                        curr_price / cost[-1] - 1, 4) < -0.2:
+                if pred_price < curr_price or round(
+                        curr_price / cost[-1] - 1, 4) > 0.3 or round(
+                            curr_price / cost[-1] - 1, 4) < -0.2:
                     principle.append(position[-1] * curr_price)
                     position.append(0)
                     cost.append(0)
@@ -134,13 +136,20 @@ class TFTStrategy:
             date.append(day)
             market_price.append(curr_price)
             predict_price.append(pred_price)
-            profit.append(round((cost[-1] * position[-1] + principle[-1]) / principle[0] - 1, 4))
+            profit.append(
+                round(
+                    (cost[-1] * position[-1] + principle[-1]) / principle[0] -
+                    1, 4))
             basic.append(round((curr_price - init) / init, 4))
 
             # strategy &2
             if index > start + 25:
-                ema12 = round(sum(data.iloc[index - start - 11:index - start + 1, 6].values) / 12, 2)
-                ema26 = round(sum(data.iloc[index - start - 25:index - start + 1, 6].values) / 26, 2)
+                ema12 = round(
+                    sum(data.iloc[index - start - 11:index - start + 1,
+                                  6].values) / 12, 2)
+                ema26 = round(
+                    sum(data.iloc[index - start - 25:index - start + 1,
+                                  6].values) / 26, 2)
                 dif.append(ema12 - ema26)
                 if index > start + 34:
                     dea = round(sum(dif[-9:]) / 9, 4)
@@ -177,7 +186,9 @@ class TFTStrategy:
                 position2.append(0)
                 cost2.append(0)
 
-            profit2.append(round((curr_price * position2[-1] + principle2[-1]) / principle2[0] - 1, 4))
+            profit2.append(
+                round((curr_price * position2[-1] + principle2[-1]) /
+                      principle2[0] - 1, 4))
 
         res['date'] = date
         res['market_price'] = market_price
@@ -197,7 +208,7 @@ class TFTStrategy:
         res.to_csv('backtesting.csv')
         return res
         #print(res)
-        
+
     def get_input_data(self):
         data_folder = self.config.data_folder
         csv_path = os.path.join(data_folder, 'bitcoin_hisWithEmbs.csv')
@@ -217,7 +228,11 @@ class TFTStrategy:
         #        if i > 119:
         #            ave_season[i] = round(sum(y[i - 120:i]) / 120, 2)
         plt.figure(figsize=(10, 6))
-        plt.plot(x, y, color='#FF0000', label='trading-strategy', linewidth=1.0)
+        plt.plot(x,
+                 y,
+                 color='#FF0000',
+                 label='trading-strategy',
+                 linewidth=1.0)
         #plt.plot(x, ave_month, color='green', label='ave_month', linewidth=1.0)
         #plt.plot(x, ave_season, color='blue', label='ave_season', linewidth=1.0)
         plt.plot(x, macd, color='blue', label='macd', linewidth=1.0)
