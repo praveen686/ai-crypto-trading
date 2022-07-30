@@ -7,7 +7,7 @@ pip3 install -r requirements.txt
 python3 -m script_download_data bitcoin tft_output
 
 # Run model training (GPU required)
-python3 -m script_train_fixed_params bitcoin tft_output 
+python3 -m script_train_fixed_params bitcoin tft_output yes 
 
 # Hyperparameters tuning
 Modify data_formatters/bitcoin.py line 190
