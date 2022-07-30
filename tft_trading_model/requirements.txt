@@ -7,4 +7,5 @@ pyunpack>=0.1.2
 patool>=1.12
 tensorflow-gpu==1.15.*
 protobuf==3.20
+matplotlib
 
